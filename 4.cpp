@@ -1,68 +1,71 @@
 #include <iostream>
-#include <cmath> // Required for sqrt and pow
+#include <string>
 
 using namespace std;
 
-class Point {
+class TNEB {
 public:
-    double x, y;
+    int ebNumber;
+    string consumerName;
+    string consumerType; // Domestic or Commercial
+    int units;
+    double billAmount;
 
-    // 1. Default Constructor (Sets point to origin 0,0)
-    Point() {
-        x = 0;
-        y = 0;
+    // Function to input details
+    void getDetails() {
+        cout << "Enter EB Number: ";
+        cin >> ebNumber;
+        cin.ignore();
+        cout << "Enter Consumer Name: ";
+        getline(cin, consumerName);
+        cout << "Enter Consumer Type (D for Domestic / C for Commercial): ";
+        getline(cin, consumerType);
+        cout << "Enter Units Consumed: ";
+        cin >> units;
+        
+        calculateBill(); // Calculate bill immediately after getting units
     }
 
-    // 2. Parameterized Constructor (Sets point to specific coordinates)
-    Point(double xVal, double yVal) {
-        x = xVal;
-        y = yVal;
+    // Function to calculate bill based on Tariff Rules
+    void calculateBill() {
+        if (consumerType == "D" || consumerType == "d") {
+            // Domestic Tariff (Lower rates)
+            if (units <= 100) billAmount = units * 1.50;
+            else if (units <= 200) billAmount = (100 * 1.50) + (units - 100) * 3.00;
+            else billAmount = (100 * 1.50) + (100 * 3.00) + (units - 200) * 5.00;
+        } 
+        else {
+            // Commercial Tariff (Higher rates)
+            if (units <= 100) billAmount = units * 4.50;
+            else billAmount = (100 * 4.50) + (units - 100) * 8.00;
+        }
     }
 
-    // Function to let the user manually set coordinates
-    void getCoordinates() {
-        cout << "Enter X coordinate: ";
-        cin >> x;
-        cout << "Enter Y coordinate: ";
-        cin >> y;
-    }
-
-    // Function to calculate distance between THIS point and ANOTHER point object
-    double calculateDistance(Point otherPoint) {
-        // Using the Distance Formula
-        return sqrt(pow(otherPoint.x - x, 2) + pow(otherPoint.y - y, 2));
-    }
-
-    void display() {
-        cout << "(" << x << ", " << y << ")";
+    // Function to display the result
+    void displayBill() {
+        cout << "EB No: " << ebNumber << " | Name: " << consumerName 
+             << " | Type: " << consumerType << " | Units: " << units 
+             << " | Total: Rs." << billAmount << endl;
     }
 };
 
 int main() {
-    // Creating Point 1 using the Default Constructor (0,0)
-    Point p1; 
-    
-    // Creating Point 2 using the Parameterized Constructor (e.g., 3,4)
-    Point p2(3.0, 4.0);
+    int n;
+    cout << "Enter number of consumers: ";
+    cin >> n;
 
-    cout << "Point 1 is at the origin: ";
-    p1.display();
-    cout << "\nPoint 2 is initialized at: ";
-    p2.display();
+    // Array of Objects
+    TNEB consumers[100]; 
 
-    // Let's create a third point and ask the user for input
-    Point p3;
-    cout << "\n\nLet's set a custom Point 3:" << endl;
-    p3.getCoordinates();
+    for (int i = 0; i < n; i++) {
+        cout << "\n--- Details for Consumer " << (i + 1) << " ---" << endl;
+        consumers[i].getDetails();
+    }
 
-    // Calculating distance between Point 1 (0,0) and Point 3 (User input)
-    double distance = p1.calculateDistance(p3);
-
-    cout << "\nThe distance between ";
-    p1.display();
-    cout << " and ";
-    p3.display();
-    cout << " is: " << distance << endl;
+    cout << "\n========== GENERATED BILLS ==========" << endl;
+    for (int i = 0; i < n; i++) {
+        consumers[i].displayBill();
+    }
 
     return 0;
 }

@@ -3,63 +3,72 @@
 
 using namespace std;
 
-class BankAccount {
+class Student {
 public:
-    string accountNumber;
-    string accountHolderName;
-    double balance;
+    int rollNumber;
+    string name;
+    float marks[5];
+    float average;
+    char grade;
 
-    // 1. First Constructor (Starts with 0 balance)
-    BankAccount(string accNum, string name) {
-        accountNumber = accNum;
-        accountHolderName = name;
-        balance = 0.0; 
-        cout << "Account created for " << name << " with 0 balance." << endl;
-    }
+    // Function to input details and validate marks
+    void inputDetails() {
+        cout << "Enter Roll Number: ";
+        cin >> rollNumber;
+        cin.ignore();
+        cout << "Enter Student Name: ";
+        getline(cin, name);
 
-    // 2. Second Constructor (Starts with an initial balance)
-    BankAccount(string accNum, string name, double initialBalance) {
-        accountNumber = accNum;
-        accountHolderName = name;
-        balance = initialBalance;
-        cout << "Account created for " << name << " with initial balance: " << balance << endl;
-    }
-
-    // Function to deposit money
-    void deposit(double amount) {
-        balance += amount;
-        cout << "Deposited: " << amount << " | New Balance: " << balance << endl;
-    }
-
-    // Function to withdraw money
-    void withdraw(double amount) {
-        if (amount > balance) {
-            cout << "Insufficient funds! You only have " << balance << endl;
-        } else {
-            balance -= amount;
-            cout << "Withdrew: " << amount << " | Remaining Balance: " << balance << endl;
+        float sum = 0;
+        for (int i = 0; i < 5; i++) {
+            float m;
+            do {
+                cout << "Enter marks for Subject " << (i + 1) << " (0-100): ";
+                cin >> m;
+                if (m < 0 || m > 100) {
+                    cout << "Invalid marks! Please enter between 0 and 100." << endl;
+                }
+            } while (m < 0 || m > 100);
+            
+            marks[i] = m;
+            sum += m;
         }
+        average = sum / 5.0;
+        calculateGrade();
     }
 
-    // Function to show balance
-    void displayBalance() {
-        cout << "Account: " << accountNumber << " | Holder: " << accountHolderName 
-             << " | Current Balance: " << balance << endl;
+    // Function to determine grade based on average
+    void calculateGrade() {
+        if (average >= 90) grade = 'A';
+        else if (average >= 75) grade = 'B';
+        else if (average >= 50) grade = 'C';
+        else grade = 'F';
+    }
+
+    // Function to display student report
+    void displayDetails() {
+        cout << "\nRoll No: " << rollNumber << " | Name: " << name;
+        cout << " | Avg: " << average << "% | Grade: " << grade << endl;
     }
 };
 
 int main() {
-    // Creating object using the FIRST constructor (0 balance)
-    BankAccount user1("ACC123", "Buddy");
-    user1.deposit(500);
-    user1.displayBalance();
+    int n;
+    cout << "How many students do you want to enter? ";
+    cin >> n;
 
-    cout << "-----------------------------------" << endl;
+    // Create an array of Student objects
+    Student classroom[n];
 
-    // Creating object using the SECOND constructor (Initial balance provided)
-    BankAccount user2("ACC456", "Alex", 1000.0);
-    user2.withdraw(200);
-    user2.displayBalance();
+    for (int i = 0; i < n; i++) {
+        cout << "\n--- Entering data for Student " << (i + 1) << " ---" << endl;
+        classroom[i].inputDetails();
+    }
+
+    cout << "\n======= STUDENT REPORT CARD =======";
+    for (int i = 0; i < n; i++) {
+        classroom[i].displayDetails();
+    }
 
     return 0;
 }
